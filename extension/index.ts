@@ -53,7 +53,10 @@ interface Config {
 }
 
 const DEFAULT_CONFIG: Config = {
-  relayUrl: "ws://localhost:8787/ws",
+  // Default to the public relay at shitty.chat. Override via /chat_config,
+  // by passing a URL to /chat_join, or by editing
+  // ~/.pi/agent/shitty-chat/config.json.
+  relayUrl: "wss://shitty.chat/ws",
   askPolicy: "confirm",
   answerMode: "readonly",
   allowlist: [],

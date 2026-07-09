@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { api, wsUrl } from "./api";
 import { deriveKeys, generateRoomKey, sha256Hex } from "../../shared/crypto";
 import { ChatView } from "./ChatView";
+import { Landing } from "./Landing";
 
 interface Config {
   googleClientId: string | null;
@@ -413,6 +414,6 @@ export function App() {
   }, [check]);
 
   if (loading || !config) return <div className="center dim">loading...</div>;
-  if (!me) return <Login config={config} onLogin={check} />;
+  if (!me) return <Landing config={config} onLogin={check} />;
   return <Rooms me={me} onLogout={() => setMe(null)} />;
 }

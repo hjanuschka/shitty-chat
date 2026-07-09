@@ -832,3 +832,360 @@ code.key {
 
 /* legacy .composer-row / .composer .ctx rules replaced by the new
    .composer-toolbar / .kind-pills / .composer-input styles above. */
+
+/* ---------------- landing page ---------------- */
+
+#root:has(.landing) {
+  max-width: none;
+  padding: 0;
+}
+
+.landing {
+  color: var(--fg);
+  font-family: var(--prose);
+  line-height: 1.6;
+  background:
+    radial-gradient(ellipse at top, rgba(212, 175, 55, 0.05), transparent 60%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+.landing-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px;
+  border-bottom: 1px solid #1a1a1e;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.landing-logo {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.landing-logo .dot-green {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px rgba(106, 176, 128, 0.55);
+}
+
+.landing-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.landing-nav-right a {
+  color: var(--dim);
+}
+
+.landing-nav-right a:hover {
+  color: var(--fg);
+}
+
+.cta-mini {
+  background: transparent;
+  color: var(--gold);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 6px;
+  padding: 5px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.cta-mini:hover {
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--gold);
+}
+
+.hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 90px 32px 60px;
+  text-align: center;
+}
+
+.hero-title {
+  font-family: var(--mono);
+  font-size: 52px;
+  line-height: 1.1;
+  color: var(--fg);
+  margin: 0 0 20px;
+  letter-spacing: -0.02em;
+}
+
+.hero-title .accent {
+  color: var(--gold);
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: var(--dim);
+  max-width: 640px;
+  margin: 0 auto 42px;
+}
+
+.verbs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  max-width: 720px;
+  margin: 0 auto 42px;
+}
+
+.verb {
+  background: var(--panel);
+  border: 1px solid #2c2c30;
+  border-radius: 10px;
+  padding: 20px 16px;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.verb:hover {
+  transform: translateY(-2px);
+}
+
+.verb-ask { border-top: 2px solid var(--gold); }
+.verb-say { border-top: 2px solid var(--blue); }
+.verb-turn { border-top: 2px solid var(--orange); }
+
+.verb-name {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.verb-say .verb-name { color: var(--blue); }
+.verb-turn .verb-name { color: var(--orange); }
+
+.verb-desc {
+  color: var(--dim);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cta-primary {
+  background: var(--gold);
+  color: #111;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+
+.cta-primary:hover {
+  background: #e8c14a;
+  transform: translateY(-1px);
+}
+
+.how, .features, .cli, .signin-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 32px;
+}
+
+.how h2, .features h2, .cli h2, .signin-section h2 {
+  font-family: var(--mono);
+  font-size: 28px;
+  color: var(--fg);
+  margin: 0 0 32px;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.how-step {
+  background: var(--panel);
+  border: 1px solid #2c2c30;
+  border-radius: 10px;
+  padding: 24px 22px;
+  position: relative;
+}
+
+.how-num {
+  position: absolute;
+  top: -14px;
+  left: 20px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: #111;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.how-step h3 {
+  margin: 4px 0 10px;
+  font-size: 16px;
+  color: var(--gold);
+  font-family: var(--mono);
+}
+
+.how-step p {
+  margin: 0;
+  color: var(--dim);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.how-step code, .feature code {
+  background: rgba(0, 0, 0, 0.4);
+  color: #eadf9c;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.feature {
+  background: var(--panel);
+  border: 1px solid #2c2c30;
+  border-radius: 10px;
+  padding: 22px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.feature-icon {
+  font-size: 26px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.feature h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: var(--gold);
+  font-family: var(--mono);
+}
+
+.feature p {
+  margin: 0;
+  color: var(--dim);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.cli-block {
+  background: #08080a;
+  border: 1px solid #1a1a1e;
+  border-radius: 10px;
+  padding: 20px 24px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.7;
+  max-width: 780px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
+.cli-line {
+  white-space: pre;
+}
+
+.cli-prompt {
+  color: var(--gold);
+  margin-right: 8px;
+}
+
+.cli-in {
+  color: var(--gold-soft);
+  margin-right: 6px;
+}
+
+.cli-out {
+  color: var(--dim);
+}
+
+.signin-section {
+  text-align: center;
+}
+
+.signin-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.dev-login-btn {
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--gold);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 24px;
+  padding: 9px 20px;
+  font-family: var(--mono);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dev-login-btn:hover {
+  background: rgba(212, 175, 55, 0.14);
+}
+
+.landing-footer {
+  border-top: 1px solid #1a1a1e;
+  max-width: 1200px;
+  margin: 40px auto 0;
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--dim);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.landing-footer a {
+  color: var(--dim);
+}
+
+.landing-footer a:hover {
+  color: var(--gold);
+}
+
+@media (max-width: 700px) {
+  .hero-title { font-size: 36px; }
+  .hero-sub { font-size: 15px; }
+  .verbs, .how-steps, .features-grid { grid-template-columns: 1fr; }
+  .landing-nav { padding: 14px 20px; }
+}

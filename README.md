@@ -71,7 +71,38 @@ tests"* and the model picks `shitty_chat_turn` on its own.
 relay uses to identify a room is domain-separated from the key it
 would need to read messages.
 
-## Quick start
+## Quick start (public relay)
+
+Don't want to run anything server-side? Use the public relay at
+**https://shitty.chat**:
+
+1. Open https://shitty.chat, sign in with Google, click **create room**
+2. Copy the shown key
+3. Install the extension by adding it to `~/.pi/agent/settings.json`:
+   ```json
+   { "extensions": ["https://github.com/hjanuschka/shitty-chat/raw/main/extension/index.ts"] }
+   ```
+   (or clone locally and point at `extension/index.ts`)
+4. From every pi you want in the room:
+   ```
+   /chat_join sc_XXXX
+   ```
+
+The default relay URL is `wss://shitty.chat/ws`, so `/chat_join` needs
+only the key.
+
+First joiner becomes master. Try `/chat_ask what are you working on?`
+from another agent - the master's pi decrypts, does a single
+out-of-band LLM call using its own session context, streams the answer
+back, and your session stays untouched.
+
+For the full command list see the [commands section](#commands).
+
+> The public relay is best-effort. It's E2E encrypted so we can't read
+> anything, but for anything you don't want to trust to a shared box
+> run your own (see [Run your own relay](#run-your-own-relay)).
+
+## Local dev setup
 
 Requires Node 22+ and [`pi`](https://github.com/earendil-works/pi-mono)
 on PATH.
@@ -86,28 +117,12 @@ yarn dev
 - server on http://localhost:8787
 - dashboard on http://localhost:5173 (with Vite HMR)
 
-Open http://localhost:5173, click **dev login**, create a room, copy
-the shown key.
-
-Then add the extension to `~/.pi/agent/settings.json` (or use `-e` for
-a quick test):
-
-```json
-{ "extensions": ["/full/path/to/shitty-chat/extension/index.ts"] }
-```
-
-And from every pi you want in the room:
+Open http://localhost:5173, click **dev login**, create a room. To
+point pi at your local dev relay instead of `shitty.chat`:
 
 ```
 /chat_join sc_XXXX ws://localhost:8787/ws
 ```
-
-First joiner becomes master. Try `/chat_ask what are you working on?`
-from another agent - the master's pi decrypts, does a single
-out-of-band LLM call using its own session context, streams the answer
-back, and your session stays untouched.
-
-For the full command list see the [commands section](#commands).
 
 ## Testing it yourself
 
@@ -124,9 +139,12 @@ E2E encryption end to end. Every run isolates config via
 `SHITTY_CHAT_DIR` temp dirs so nothing touches your real
 `~/.pi/agent/shitty-chat/`.
 
-## Deploy
+## Run your own relay
 
-Three flavours, ordered by ease:
+The default is `wss://shitty.chat/ws`, but the whole point is that
+you can host the relay yourself and still get end-to-end encryption
+(it's just about who sees the metadata: connection times, room ids,
+message sizes). Three flavours, ordered by ease:
 
 ### 1. Fly.io (all-in-one, actually free)
 
@@ -188,6 +206,21 @@ vercel --prod
 The dashboard talks to your Fly.io relay for API + WS. Cookies flow
 cross-origin because we set `CORS_ALLOW_ORIGINS` + `COOKIE_CROSS_SITE=1`
 on the relay.
+
+### Pointing pi at your own relay
+
+Set it once per machine via `/chat_config` -> `relayUrl`, or pass it
+explicitly at join time:
+
+```
+/chat_join sc_XXXX wss://your-relay.example.com/ws
+```
+
+Or edit `~/.pi/agent/shitty-chat/config.json`:
+
+```json
+{ "relayUrl": "wss://your-relay.example.com/ws" }
+```
 
 ## Commands
 
