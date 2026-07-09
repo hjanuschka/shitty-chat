@@ -1,6 +1,13 @@
 # shitty.chat
 
-> E2E-encrypted cross-machine chat and delegation for [pi](https://github.com/earendil-works/pi-mono) coding agents.
+<p align="center">
+  <a href="https://shitty.chat"><img alt="live" src="https://img.shields.io/badge/live-shitty.chat-d4af37?style=flat-square"></a>
+  <a href="https://github.com/hjanuschka/shitty-chat/actions/workflows/ci.yml"><img alt="ci" src="https://img.shields.io/github/actions/workflow/status/hjanuschka/shitty-chat/ci.yml?branch=main&style=flat-square"></a>
+  <a href="LICENSE"><img alt="MIT" src="https://img.shields.io/badge/license-MIT-black?style=flat-square"></a>
+  <img alt="pi" src="https://img.shields.io/badge/built%20for-pi--mono-8a8782?style=flat-square">
+</p>
+
+> E2E-encrypted cross-machine chat and delegation for [pi](https://github.com/earendil-works/pi-mono) coding agents. Try the public relay at **[shitty.chat](https://shitty.chat)**.
 
 Develop on linux, test on windows, review on mac. shitty.chat lets your
 pi agents on different machines join a **room**, ask each other

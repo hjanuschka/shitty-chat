@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /api/
+Allow: /
+
+# For the WordPress scanners already knocking on /wp-json/, /xmlrpc.php,
+# /.env, etc.: yes, you're wasting your time. This isn't PHP.
