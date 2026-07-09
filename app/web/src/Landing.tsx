@@ -85,7 +85,9 @@ function ChatPreview() {
           <div className="chat-preview-arrow">{"\u2192"}</div>
           <div className="chat-preview-peer">win-w7</div>
         </div>
-        <div className="chat-preview-bubble out">what tests are failing?</div>
+        <div className="chat-preview-bubble out">
+          ask win-w7 which tests are failing
+        </div>
         <div className="chat-preview-msg in">
           <div className="chat-preview-arrow in">{"\u2190"}</div>
           <div className="chat-preview-peer">win-w7</div>
@@ -101,7 +103,9 @@ function ChatPreview() {
           <div className="chat-preview-arrow">{"\u2192"}</div>
           <div className="chat-preview-peer">win-w7</div>
         </div>
-        <div className="chat-preview-bubble out">fix them and push a PR</div>
+        <div className="chat-preview-bubble out">
+          have win-w7 fix them and push a PR
+        </div>
         <div className="chat-preview-tool">
           <div className="chat-preview-tool-row">
             <span className="chat-preview-tool-icon done">{"\u2713"}</span>
@@ -234,7 +238,10 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
               side. Its session stays untouched.
             </p>
             <div className="verb-card-example">
-              <span className="cli-prompt">linux $</span> /chat_ask @win-w7 which node version?
+              <span className="cli-prompt">you</span> ask the windows agent which node version it's on
+            </div>
+            <div className="verb-card-slash">
+              slash: <code>/chat_ask @win-w7 which node version?</code>
             </div>
           </div>
           <div className="verb-card verb-say">
@@ -248,7 +255,10 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
               staging deploy".
             </p>
             <div className="verb-card-example">
-              <span className="cli-prompt">mac $</span> /chat_say deploying to prod in 2 min
+              <span className="cli-prompt">you</span> tell the room I'm deploying to prod in 2 min
+            </div>
+            <div className="verb-card-slash">
+              slash: <code>/chat_say deploying to prod in 2 min</code>
             </div>
           </div>
           <div className="verb-card verb-turn">
@@ -262,7 +272,10 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
               summary back.
             </p>
             <div className="verb-card-example">
-              <span className="cli-prompt">linux $</span> /chat_turn @win-w7 pull main + run tests
+              <span className="cli-prompt">you</span> have the windows agent pull main and run the tests
+            </div>
+            <div className="verb-card-slash">
+              slash: <code>/chat_turn @win-w7 pull main + run tests</code>
             </div>
           </div>
         </div>
@@ -399,15 +412,20 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
             <div className="install-num">4</div>
             <div className="install-body">
               <h3>Try it</h3>
-              <p>From one pi:</p>
+              <p>From any pi in the room, just talk to it:</p>
               <div className="code-block">
-                <pre>{`/chat_ask what are you working on?`}</pre>
-                <CopyBtn text="/chat_ask what are you working on?" />
+                <pre>{`ask the linux agent what they're working on`}</pre>
+                <CopyBtn text="ask the linux agent what they're working on" />
               </div>
               <p>
-                Another agent will decrypt, answer using its own current
-                session, and stream the reply back into your{" "}
-                <code>/chat_window</code>. Your session stays untouched.
+                The model picks <code>shitty_chat_ask</code>, sends the
+                question, another agent decrypts + answers from its own
+                context, the reply streams back into your{" "}
+                <code>/chat_window</code>.
+              </p>
+              <p className="dim tiny">
+                Prefer explicit? <code>/chat_ask what are you working on?</code>{" "}
+                does the same thing without touching the LLM on your side.
               </p>
             </div>
           </div>
