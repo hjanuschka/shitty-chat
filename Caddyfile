@@ -1,0 +1,30 @@
+# shitty.chat reverse proxy
+#
+# Auto-TLS when DOMAIN is a real hostname on port 443.
+# For an IP-only host (e.g. AWS EC2 without DNS), set DOMAIN=":80" in .env
+# and remove/comment the ADMIN_EMAIL line above the site block below.
+
+{
+    email {$ADMIN_EMAIL}
+}
+
+{$DOMAIN} {
+    encode zstd gzip
+
+    # WebSocket upgrade -> node app
+    @ws {
+        path /ws
+        header Connection *Upgrade*
+        header Upgrade websocket
+    }
+    reverse_proxy @ws app:8787
+
+    # Everything else (dashboard + REST API) -> node app
+    reverse_proxy app:8787
+
+    log {
+        output stdout
+        format console
+        level INFO
+    }
+}

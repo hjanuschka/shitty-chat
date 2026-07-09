@@ -1,0 +1,19 @@
+{
+  "name": "shitty-chat",
+  "private": true,
+  "workspaces": [
+    "server",
+    "web"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n server,web -c blue,magenta \"yarn workspace @shitty-chat/server dev\" \"yarn workspace @shitty-chat/web dev\"",
+    "selftest": "tsx scripts/selftest.mts",
+    "fulltest": "tsx scripts/fulltest.mts"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

@@ -1,0 +1,50 @@
+# fly.io single-container deploy for shitty.chat.
+#
+#   fly launch --no-deploy    (accept the defaults; skip Postgres)
+#   fly volumes create sc_data --size 1 --region <your-region>
+#   fly secrets set GOOGLE_CLIENT_ID=...
+#   fly deploy
+#
+# Free tier: shared-cpu-1x + 256MB is enough for a handful of rooms.
+# The volume persists the SQLite db across restarts.
+
+app = "shitty-chat"
+primary_region = "fra"           # change to your closest fly region
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"                  # fly's internal port convention
+  SHITTY_CHAT_DB = "/data/shitty-chat.db"
+  SHITTY_CHAT_WEB_DIST = "/app/web/dist"
+
+[[mounts]]
+  source = "sc_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0        # scale to zero when idle
+  processes = ["app"]
+
+  [http_service.concurrency]
+    type = "connections"
+    hard_limit = 200
+    soft_limit = 100
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/healthz"
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256

@@ -1,0 +1,62 @@
+# Production compose: node app + Caddy in front for automatic TLS.
+# Point your DNS A record at this host and Caddy fetches Let's Encrypt certs
+# automatically (both https on 443 and wss on 443).
+#
+# Usage:
+#   cp .env.example .env
+#   $EDITOR .env           # set DOMAIN, ADMIN_EMAIL, GOOGLE_CLIENT_ID
+#   docker compose up -d
+#   docker compose logs -f
+#
+# On a machine with no DNS (single VM demo), point DOMAIN at the public IP
+# and use `caddy_localhost` profile below - it drops TLS and serves plain
+# http/ws on port 80 so you can smoke-test end to end.
+
+services:
+  app:
+    build: .
+    image: shittychat/app:latest
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 8787
+      SHITTY_CHAT_DB: /data/shitty-chat.db
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      DEV_LOGIN: ${DEV_LOGIN:-0}
+      SC_AGENTS_PER_ROOM: ${SC_AGENTS_PER_ROOM:-10}
+      SC_ASKS_PER_DAY: ${SC_ASKS_PER_DAY:-500}
+      SC_ASKS_PER_MINUTE: ${SC_ASKS_PER_MINUTE:-30}
+      SC_ROOMS_PER_ACCOUNT: ${SC_ROOMS_PER_ACCOUNT:-10}
+      SC_EMPTY_ROOM_TTL_MS: ${SC_EMPTY_ROOM_TTL_MS:-1200000}
+      SC_REAPER_INTERVAL_MS: ${SC_REAPER_INTERVAL_MS:-60000}
+    volumes:
+      - sc-data:/data
+    expose:
+      - "8787"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8787/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  sc-data:
+  caddy-data:
+  caddy-config:

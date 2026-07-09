@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: yarn
+
+      - name: install
+        run: yarn install --frozen-lockfile
+
+      - name: bundle check (server + extension)
+        run: |
+          ./node_modules/.bin/esbuild extension/index.ts \
+            --bundle --format=esm --platform=node --outfile=/dev/null \
+            --external:@earendil-works/* --external:ws --external:typebox
+          ./node_modules/.bin/esbuild server/src/index.ts \
+            --bundle --format=esm --platform=node --outfile=/dev/null \
+            --external:better-sqlite3 --external:express --external:ws
+
+      - name: build web
+        run: yarn workspace @shitty-chat/web build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: docker build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: shitty-chat:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
