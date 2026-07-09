@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": [
     "server",
-    "web"
+    "web",
+    "mcp"
   ],
   "scripts": {
     "dev": "concurrently -k -n server,web -c blue,magenta \"yarn workspace @shitty-chat/server dev\" \"yarn workspace @shitty-chat/web dev\"",

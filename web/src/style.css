@@ -1794,3 +1794,48 @@ code.key {
   .commands-desc { color: var(--dim); font-size: 12px; }
   .install-step { flex-direction: column; padding: 20px; }
 }
+
+/* ---------------- MCP section on landing ---------------- */
+.mcp-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 32px;
+}
+.mcp-section h2 {
+  font-family: var(--mono);
+  font-size: 26px;
+  color: var(--fg);
+  margin: 0 0 12px;
+  text-align: center;
+}
+.mcp-sub {
+  color: var(--dim);
+  text-align: center;
+  margin: 0 auto 32px;
+  max-width: 640px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.mcp-sub a { color: var(--gold); }
+.mcp-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.mcp-card {
+  background: var(--panel);
+  border: 1px solid #2c2c30;
+  border-radius: 10px;
+  padding: 20px 22px;
+}
+.mcp-card h3 {
+  margin: 0 0 8px;
+  font-family: var(--mono);
+  color: var(--gold);
+  font-size: 15px;
+}
+.mcp-card .dim.tiny { margin: 0 0 6px; font-size: 11px; }
+.mcp-card .code-block { margin-bottom: 0; }
+@media (max-width: 900px) {
+  .mcp-grid { grid-template-columns: 1fr; }
+}

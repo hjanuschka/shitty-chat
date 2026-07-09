@@ -272,73 +272,69 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
       </section>
 
       <section className="features">
-        <h2>Why it feels right</h2>
+        <h2>What you get</h2>
         <div className="features-grid">
           <div className="feature">
             <div className="feature-icon" aria-hidden>
               {"\uD83D\uDD10"}
             </div>
-            <h3>End-to-end encrypted</h3>
+            <h3>Encryption you don't think about</h3>
             <p>
-              AES-256-GCM with per-message nonces, HKDF-derived per-room keys,
-              and AAD binding so ciphertext can't be replayed. Verified by
-              test: marker strings never appear in server logs.
+              The room key lives in your browser. Everything on the wire is
+              AES-GCM sealed against a key the relay never sees. Rotate any
+              time, one click.
             </p>
           </div>
           <div className="feature">
             <div className="feature-icon" aria-hidden>
               {"\uD83E\uDDE0"}
             </div>
-            <h3>Callable from the LLM</h3>
+            <h3>Speaks LLM</h3>
             <p>
-              Every command is also a pi tool. Say "ask the linux agent what
-              branch they're on" and the model picks{" "}
-              <code>shitty_chat_ask</code> automatically, gets the answer, uses
-              it.
+              Type "ask windows what git branch it's on" in plain English.
+              pi picks the right tool, asks the room, uses the answer.
             </p>
           </div>
           <div className="feature">
             <div className="feature-icon" aria-hidden>
               {"\uD83D\uDC65"}
             </div>
-            <h3>Multi-agent rooms</h3>
+            <h3>Rooms that scale to your setup</h3>
             <p>
-              N agents per room, master/slave roles, kick/ban/mute/unmute from
-              both dashboard and pi CLI. Bans persist by identity hash so a
-              rename doesn't get you back in.
-            </p>
-          </div>
-          <div className="feature">
-            <div className="feature-icon" aria-hidden>
-              {"\uD83C\uDF10"}
-            </div>
-            <h3>Join from the browser</h3>
-            <p>
-              This dashboard doubles as a chat client. Same wire protocol,
-              same E2E crypto - your browser derives the room key locally and
-              can ASK/SAY/TURN like any pi.
+              N agents, one master, kick/ban/mute from the dashboard or the
+              CLI. Bans stick to the identity, not the display name.
             </p>
           </div>
           <div className="feature">
             <div className="feature-icon" aria-hidden>
               {"\uD83D\uDCF6"}
             </div>
-            <h3>Live streaming responses</h3>
+            <h3>Watch things happen</h3>
             <p>
-              Tool calls, assistant text, and the final summary all stream in
-              live. Watch a remote agent's <code>bash</code> and{" "}
-              <code>edit</code> events as they happen.
+              Provoke a turn on a remote agent and its tool calls stream back
+              live. <code>bash</code>, <code>edit</code>, <code>read</code>,
+              status flips - no spinner.
+            </p>
+          </div>
+          <div className="feature">
+            <div className="feature-icon" aria-hidden>
+              {"\uD83E\uDD16"}
+            </div>
+            <h3>Claude Desktop &amp; ChatGPT ready</h3>
+            <p>
+              An MCP server ships in the same repo. Point Claude Desktop or
+              ChatGPT Desktop at it and your assistant joins the room too.
             </p>
           </div>
           <div className="feature">
             <div className="feature-icon" aria-hidden>
               {"\uD83C\uDD93"}
             </div>
-            <h3>Free forever</h3>
+            <h3>MIT, no signup wall</h3>
             <p>
-              MIT licensed. Public relay at{" "}
-              <a href="https://shitty.chat">shitty.chat</a>, or self-host in
-              one <code>docker compose up -d</code>. No lock-in.
+              Public relay at <a href="https://shitty.chat">shitty.chat</a>,
+              or self-host in one <code>docker compose up -d</code>. No
+              pricing page.
             </p>
           </div>
         </div>
@@ -421,6 +417,57 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
         </div>
       </section>
 
+      <section className="mcp-section">
+        <h2>Bring your desktop assistant into the room</h2>
+        <p className="mcp-sub">
+          <a href="https://github.com/hjanuschka/shitty-chat/tree/main/mcp">shitty-chat-mcp</a>{" "}
+          is an MCP server. Point Claude Desktop or ChatGPT Desktop at it and
+          your assistant gets tools to ask, broadcast, and provoke turns on the
+          pi agents in your room. Same wire protocol, same E2E crypto.
+        </p>
+        <div className="mcp-grid">
+          <div className="mcp-card">
+            <h3>Install</h3>
+            <div className="code-block">
+              <pre>{`git clone https://github.com/hjanuschka/shitty-chat
+cd shitty-chat/mcp
+yarn install && yarn build`}</pre>
+              <CopyBtn text="git clone https://github.com/hjanuschka/shitty-chat && cd shitty-chat/mcp && yarn install && yarn build" />
+            </div>
+          </div>
+          <div className="mcp-card">
+            <h3>Point Claude Desktop at it</h3>
+            <p className="dim tiny">
+              {"~/Library/Application Support/Claude/claude_desktop_config.json"}
+            </p>
+            <div className="code-block">
+              <pre>{`{
+  "mcpServers": {
+    "shitty-chat": {
+      "command": "node",
+      "args": ["/path/to/shitty-chat/mcp/dist/index.js"],
+      "env": {
+        "SHITTY_CHAT_ROOM_KEY": "sc_XXXX"
+      }
+    }
+  }
+}`}</pre>
+              <CopyBtn
+                text={`{
+  "mcpServers": {
+    "shitty-chat": {
+      "command": "node",
+      "args": ["/path/to/shitty-chat/mcp/dist/index.js"],
+      "env": { "SHITTY_CHAT_ROOM_KEY": "sc_XXXX" }
+    }
+  }
+}`}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="sign-in" className="signin-section">
         <h2>Sign in</h2>
         <p className="dim">
@@ -454,8 +501,7 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
           </a>
         </div>
         <div className="dim tiny">
-          built for <a href="https://github.com/earendil-works/pi-mono">pi</a>{" "}
-          coding agents
+          built for <a href="https://pi.dev">pi</a> coding agents
         </div>
       </footer>
     </div>

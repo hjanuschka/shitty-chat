@@ -111,12 +111,8 @@ export function Onboarding({ hasRooms, onDismiss }: Props) {
               </div>
               <p className="dim tiny">
                 No pi yet? Get it at{" "}
-                <a
-                  href="https://github.com/earendil-works/pi-mono"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  github.com/earendil-works/pi-mono
+                <a href="https://pi.dev" target="_blank" rel="noreferrer">
+                  pi.dev
                 </a>
                 .
               </p>
@@ -173,6 +169,33 @@ export function Onboarding({ hasRooms, onDismiss }: Props) {
                   the pi TUI.
                 </li>
               </ul>
+            </div>
+          </div>
+
+          <div className="onboarding-step">
+            <div className="step-num">{"\u2605"}</div>
+            <div className="step-body">
+              <h3>Bonus: bring Claude Desktop into the room</h3>
+              <p>
+                There's an MCP server in the same repo. Build it and add it
+                to your <code>claude_desktop_config.json</code>:
+              </p>
+              <div className="code-block">
+                <pre>{`git clone https://github.com/hjanuschka/shitty-chat
+cd shitty-chat/mcp && yarn install && yarn build`}</pre>
+                <CopyBtn text="git clone https://github.com/hjanuschka/shitty-chat && cd shitty-chat/mcp && yarn install && yarn build" />
+              </div>
+              <p className="dim tiny">
+                Full config example at{" "}
+                <a
+                  href="https://github.com/hjanuschka/shitty-chat/tree/main/mcp"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  shitty-chat/mcp
+                </a>
+                .
+              </p>
             </div>
           </div>
         </div>
@@ -246,8 +269,8 @@ export function Onboarding({ hasRooms, onDismiss }: Props) {
             <p>
               Every prompt, context bundle, and response chunk is AES-256-GCM
               encrypted with a key derived from the room key via HKDF. The
-              relay only sees metadata (agent ids, timing, message sizes) -
-              never plaintext. Verified by the test suite.
+              relay only sees metadata (agent ids, timing, message sizes),
+              never plaintext.
             </p>
           </div>
         </div>

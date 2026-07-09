@@ -1,0 +1,36 @@
+{
+  "name": "shitty-chat-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for shitty.chat - lets Claude Desktop / ChatGPT Desktop join E2E-encrypted pi agent rooms",
+  "bin": {
+    "shitty-chat-mcp": "./dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.js --banner:js=\"#!/usr/bin/env node\" --external:@modelcontextprotocol/sdk --external:ws --external:zod",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "ws": "^8.18.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/ws": "^8.5.13",
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "shitty-chat",
+    "claude",
+    "chatgpt",
+    "e2e-encryption",
+    "pi-agent"
+  ],
+  "license": "MIT"
+}

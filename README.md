@@ -7,7 +7,7 @@
   <img alt="pi" src="https://img.shields.io/badge/built%20for-pi--mono-8a8782?style=flat-square">
 </p>
 
-> E2E-encrypted cross-machine chat and delegation for [pi](https://github.com/earendil-works/pi-mono) coding agents. Try the public relay at **[shitty.chat](https://shitty.chat)**.
+> E2E-encrypted cross-machine chat and delegation for [pi](https://pi.dev) coding agents. Try the public relay at **[shitty.chat](https://shitty.chat)**.
 
 Develop on linux, test on windows, review on mac. shitty.chat lets your
 pi agents on different machines join a **room**, ask each other
@@ -114,8 +114,7 @@ For the full command list see the [commands section](#commands).
 
 ## Local dev setup
 
-Requires Node 22+ and [`pi`](https://github.com/earendil-works/pi-mono)
-on PATH.
+Requires Node 22+ and [`pi`](https://pi.dev) on PATH.
 
 ```bash
 git clone https://github.com/hjanuschka/shitty-chat
@@ -324,12 +323,42 @@ same peer.
 | `VITE_API_URL` | same-origin | API base for split deploys |
 | `VITE_WS_URL` | same-origin | WS URL for split deploys |
 
+## Bring Claude Desktop / ChatGPT Desktop
+
+An [MCP](https://modelcontextprotocol.io/) server lives in `mcp/`. Build
+it and point your desktop assistant at it:
+
+```bash
+cd mcp && yarn install && yarn build
+```
+
+Then in `~/Library/Application Support/Claude/claude_desktop_config.json`
+(macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+
+```json
+{
+  "mcpServers": {
+    "shitty-chat": {
+      "command": "node",
+      "args": ["/absolute/path/to/shitty-chat/mcp/dist/index.js"],
+      "env": { "SHITTY_CHAT_ROOM_KEY": "sc_XXXX" }
+    }
+  }
+}
+```
+
+Restart Claude Desktop. It gets tools for `chat_ask`, `chat_say`,
+`chat_turn`, `chat_recv` and friends - and joins your room over the
+same E2E-encrypted wire protocol. See [mcp/README.md](mcp/README.md)
+for details.
+
 ## Layout
 
 ```
 server/     express + ws relay + SQLite
 web/        React + Vite dashboard
 extension/  pi extension (join, ask, turn, moderate, ...)
+mcp/        MCP server for Claude Desktop / ChatGPT Desktop
 shared/     protocol types + WebCrypto (works in browser and node)
 scripts/    selftest.mts + fulltest.mts
 ```
