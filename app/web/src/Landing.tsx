@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { api } from "./api";
 
 interface Config {
@@ -61,6 +61,151 @@ function DevLoginButton({ onLogin }: { onLogin: () => void }) {
     >
       dev login (throwaway user)
     </button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Screenshot gallery with a click-to-zoom lightbox.
+
+const SCREENSHOTS: Array<{
+  src: string;
+  caption: string;
+  side: "cli" | "web";
+  step: number;
+}> = [
+  {
+    src: "/screenshots/shitty0.png",
+    caption: "pi joins the room as master",
+    side: "cli",
+    step: 1,
+  },
+  {
+    src: "/screenshots/shitty1.png",
+    caption: "browser participant composes a TURN",
+    side: "web",
+    step: 2,
+  },
+  {
+    src: "/screenshots/shitty2.png",
+    caption: "master's pi shows the accept dialog",
+    side: "cli",
+    step: 3,
+  },
+  {
+    src: "/screenshots/shitty3.png",
+    caption: "turn ran on the remote, output streams back",
+    side: "web",
+    step: 4,
+  },
+];
+
+function ScreenshotGallery() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+
+  const close = useCallback(() => setOpenIdx(null), []);
+  const next = useCallback(
+    () => setOpenIdx((i) => (i === null ? null : (i + 1) % SCREENSHOTS.length)),
+    [],
+  );
+  const prev = useCallback(
+    () =>
+      setOpenIdx((i) =>
+        i === null ? null : (i - 1 + SCREENSHOTS.length) % SCREENSHOTS.length,
+      ),
+    [],
+  );
+
+  useEffect(() => {
+    if (openIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [openIdx, close, next, prev]);
+
+  return (
+    <>
+      <div className="screenshots-grid">
+        {SCREENSHOTS.map((s, i) => (
+          <button
+            key={s.src}
+            className={`screenshot-tile side-${s.side}`}
+            onClick={() => setOpenIdx(i)}
+            aria-label={`Open screenshot: ${s.caption}`}
+          >
+            <div className="screenshot-tile-frame">
+              <img src={s.src} alt={s.caption} loading="lazy" />
+            </div>
+            <div className="screenshot-tile-meta">
+              <span className="screenshot-num">{s.step}</span>
+              <span className="screenshot-side">{s.side === "cli" ? "pi" : "browser"}</span>
+              <span className="screenshot-caption">{s.caption}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+      {openIdx !== null && (
+        <div
+          className="lightbox"
+          onClick={close}
+          role="dialog"
+          aria-modal="true"
+          aria-label={SCREENSHOTS[openIdx].caption}
+        >
+          <button
+            className="lightbox-close"
+            onClick={(e) => {
+              e.stopPropagation();
+              close();
+            }}
+            aria-label="close"
+          >
+            {"\u2715"}
+          </button>
+          <button
+            className="lightbox-nav lightbox-prev"
+            onClick={(e) => {
+              e.stopPropagation();
+              prev();
+            }}
+            aria-label="previous"
+          >
+            {"\u2039"}
+          </button>
+          <div
+            className="lightbox-inner"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              className="lightbox-img"
+              src={SCREENSHOTS[openIdx].src}
+              alt={SCREENSHOTS[openIdx].caption}
+            />
+            <div className="lightbox-caption">
+              <span className="lightbox-num">{SCREENSHOTS[openIdx].step}/{SCREENSHOTS.length}</span>
+              <span>{SCREENSHOTS[openIdx].caption}</span>
+            </div>
+          </div>
+          <button
+            className="lightbox-nav lightbox-next"
+            onClick={(e) => {
+              e.stopPropagation();
+              next();
+            }}
+            aria-label="next"
+          >
+            {"\u203A"}
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -165,6 +310,7 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
         </div>
         <div className="landing-nav-right">
           <a href="#how">how</a>
+          <a href="#flow">screens</a>
           <a href="#install">install</a>
           <a href="https://github.com/hjanuschka/shitty-chat" target="_blank" rel="noreferrer">
             github
@@ -348,6 +494,16 @@ export function Landing({ config, onLogin }: { config: Config; onLogin: () => vo
             </p>
           </div>
         </div>
+      </section>
+
+      <section id="flow" className="screenshots-section">
+        <h2>The flow, in four screens</h2>
+        <p className="screenshots-sub">
+          Master agent joins a room from pi, browser drops in and provokes a
+          turn, master confirms it, and the result streams back into the
+          browser. E2E encrypted through the whole thing.
+        </p>
+        <ScreenshotGallery />
       </section>
 
       <section id="install" className="install-section">
