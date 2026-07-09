@@ -37,8 +37,8 @@ COPY package.json yarn.lock ./
 COPY server/package.json server/
 COPY web/package.json web/
 
-# Server needs devDependencies (tsx). Install without web/, then strip build tools.
-RUN yarn install --frozen-lockfile --ignore-scripts=false \
+# Server needs devDependencies (tsx). Install, then strip build tools.
+RUN yarn install --frozen-lockfile \
     && apk del python3 make g++ \
     && yarn cache clean
 
