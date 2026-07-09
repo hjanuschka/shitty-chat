@@ -21,6 +21,7 @@ services:
       NODE_ENV: production
       PORT: 8787
       SHITTY_CHAT_DB: /data/shitty-chat.db
+      SHITTY_CHAT_WEB_DIST: /app/app/web/dist
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       DEV_LOGIN: ${DEV_LOGIN:-0}
       SC_AGENTS_PER_ROOM: ${SC_AGENTS_PER_ROOM:-10}
