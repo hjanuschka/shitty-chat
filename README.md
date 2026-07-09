@@ -340,24 +340,31 @@ Then in `~/Library/Application Support/Claude/claude_desktop_config.json`
   "mcpServers": {
     "shitty-chat": {
       "command": "node",
-      "args": ["/absolute/path/to/shitty-chat/mcp/dist/index.js"],
-      "env": { "SHITTY_CHAT_ROOM_KEY": "sc_XXXX" }
+      "args": ["/absolute/path/to/shitty-chat/mcp/dist/index.js"]
     }
   }
 }
 ```
 
-Restart Claude Desktop. It gets tools for `chat_ask`, `chat_say`,
-`chat_turn`, `chat_recv` and friends - and joins your room over the
-same E2E-encrypted wire protocol. See [mcp/README.md](mcp/README.md)
-for details.
+Restart Claude Desktop, then just tell it:
+
+```
+shitty chat join sc_XXXX
+```
+
+Claude picks the `chat_join` tool automatically. It gets `chat_ask`,
+`chat_say`, `chat_turn`, `chat_recv` and friends over the same
+E2E-encrypted wire protocol. See [mcp/README.md](mcp/README.md) for
+the optional `SHITTY_CHAT_ROOM_KEY` auto-join env var and other
+details.
 
 ## Layout
 
 ```
-server/     express + ws relay + SQLite
-web/        React + Vite dashboard
-extension/  pi extension (join, ask, turn, moderate, ...)
+app/
+  server/   express + ws relay + SQLite
+  web/      React + Vite dashboard
+pi/         pi extension (join, ask, turn, moderate, ...)
 mcp/        MCP server for Claude Desktop / ChatGPT Desktop
 shared/     protocol types + WebCrypto (works in browser and node)
 scripts/    selftest.mts + fulltest.mts

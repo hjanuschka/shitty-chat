@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { api, wsUrl } from "./api";
-import { deriveKeys, generateRoomKey, sha256Hex } from "../../shared/crypto";
+import { deriveKeys, generateRoomKey, sha256Hex } from "../../../shared/crypto";
 import { ChatView } from "./ChatView";
 import { Landing } from "./Landing";
 import { Onboarding } from "./Onboarding";

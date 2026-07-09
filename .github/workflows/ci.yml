@@ -20,10 +20,10 @@ jobs:
 
       - name: bundle check (server + extension)
         run: |
-          ./node_modules/.bin/esbuild extension/index.ts \
+          ./node_modules/.bin/esbuild pi/index.ts \
             --bundle --format=esm --platform=node --outfile=/dev/null \
             --external:@earendil-works/* --external:ws --external:typebox
-          ./node_modules/.bin/esbuild server/src/index.ts \
+          ./node_modules/.bin/esbuild app/server/src/index.ts \
             --bundle --format=esm --platform=node --outfile=/dev/null \
             --external:better-sqlite3 --external:express --external:ws
 

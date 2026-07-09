@@ -13,7 +13,7 @@ import type {
   SayPayload,
   TurnPayload,
   TurnResponsePayload,
-} from "../../shared/protocol";
+} from "../../../shared/protocol";
 
 const LIMITS = {
   agentsPerRoom: Number(process.env.SC_AGENTS_PER_ROOM ?? 10),

@@ -24,6 +24,28 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`
   "mcpServers": {
     "shitty-chat": {
       "command": "node",
+      "args": ["/absolute/path/to/shitty-chat/mcp/dist/index.js"]
+    }
+  }
+}
+```
+
+Restart Claude Desktop. You'll see `shitty-chat` in the tools palette.
+Then just type into the chat:
+
+```
+shitty chat join sc_XXXX
+```
+
+Claude picks the `chat_join` tool automatically and drops into the room.
+
+### Optional env vars (for auto-join or a custom display name)
+
+```json
+{
+  "mcpServers": {
+    "shitty-chat": {
+      "command": "node",
       "args": ["/absolute/path/to/shitty-chat/mcp/dist/index.js"],
       "env": {
         "SHITTY_CHAT_ROOM_KEY": "sc_XXXX",
@@ -33,8 +55,6 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`
   }
 }
 ```
-
-Restart Claude Desktop. You'll see `shitty-chat` in the tools palette.
 
 ## Configure ChatGPT Desktop
 

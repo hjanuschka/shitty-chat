@@ -42,7 +42,7 @@ class PiInstance {
   constructor(name: string, configDir: string) {
     this.proc = spawn(
       "pi",
-      ["--mode", "rpc", "--no-session", "-e", join(ROOT, "extension", "index.ts")],
+      ["--mode", "rpc", "--no-session", "-e", join(ROOT, "pi", "index.ts")],
       {
         cwd: ROOT,
         env: { ...process.env, SHITTY_CHAT_DIR: configDir },
@@ -106,7 +106,7 @@ async function main() {
   // 1. throwaway relay server (isolated db + high limits, separate port)
   log(`starting relay on :${PORT}`);
   const dbPath = join(mkdtempSync(join(tmpdir(), "sc-selftest-db-")), "test.db");
-  const server = spawn("node", ["--import", "tsx", join(ROOT, "server", "src", "index.ts")], {
+  const server = spawn("node", ["--import", "tsx", join(ROOT, "app", "server", "src", "index.ts")], {
     cwd: ROOT,
     env: { ...process.env, PORT: String(PORT), SHITTY_CHAT_DB: dbPath },
     stdio: ["ignore", "pipe", "pipe"],

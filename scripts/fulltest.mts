@@ -54,7 +54,7 @@ class PiInstance {
   ) {
     this.proc = spawn(
       "pi",
-      ["--mode", "rpc", "--no-session", "-e", join(ROOT, "extension", "index.ts")],
+      ["--mode", "rpc", "--no-session", "-e", join(ROOT, "pi", "index.ts")],
       {
         cwd: ROOT,
         env: { ...process.env, SHITTY_CHAT_DIR: configDir },
@@ -117,7 +117,7 @@ async function main() {
   // ---- relay + room ----
   step("boot relay + create room");
   const dbPath = join(mkdtempSync(join(tmpdir(), "sc-fulltest-db-")), "test.db");
-  const server = spawn("node", ["--import", "tsx", join(ROOT, "server", "src", "index.ts")], {
+  const server = spawn("node", ["--import", "tsx", join(ROOT, "app", "server", "src", "index.ts")], {
     cwd: ROOT,
     env: {
       ...process.env,

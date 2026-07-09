@@ -15,13 +15,12 @@ RUN corepack enable && corepack prepare yarn@1.22.19 --activate \
     && apk add --no-cache python3 make g++
 
 COPY package.json yarn.lock ./
-COPY server/package.json server/
-COPY web/package.json web/
+COPY app/server/package.json app/server/
+COPY app/web/package.json app/web/
 RUN yarn install --frozen-lockfile
 
 COPY shared shared
-COPY server server
-COPY web web
+COPY app app
 RUN yarn workspace @shitty-chat/web build
 
 # -----------------------------------------------------------------------------
@@ -34,8 +33,8 @@ RUN corepack enable && corepack prepare yarn@1.22.19 --activate \
     && addgroup -S sc && adduser -S sc -G sc
 
 COPY package.json yarn.lock ./
-COPY server/package.json server/
-COPY web/package.json web/
+COPY app/server/package.json app/server/
+COPY app/web/package.json app/web/
 
 # Server needs devDependencies (tsx). Install, then strip build tools.
 RUN yarn install --frozen-lockfile \
@@ -43,8 +42,8 @@ RUN yarn install --frozen-lockfile \
     && yarn cache clean
 
 COPY shared shared
-COPY server server
-COPY --from=build /app/web/dist web/dist
+COPY app/server app/server
+COPY --from=build /app/app/web/dist app/web/dist
 
 RUN mkdir -p /data && chown -R sc:sc /data /app
 USER sc
@@ -52,7 +51,7 @@ USER sc
 ENV NODE_ENV=production \
     PORT=8787 \
     SHITTY_CHAT_DB=/data/shitty-chat.db \
-    SHITTY_CHAT_WEB_DIST=/app/web/dist
+    SHITTY_CHAT_WEB_DIST=/app/app/web/dist
 
 EXPOSE 8787
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
@@ -60,7 +59,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 # tini reaps zombies and forwards signals for a clean container exit.
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "--import", "tsx", "server/src/index.ts"]
+CMD ["node", "--import", "tsx", "app/server/src/index.ts"]
 
 LABEL org.opencontainers.image.title="shitty.chat" \
       org.opencontainers.image.description="E2E-encrypted cross-machine chat + delegation for pi agents" \

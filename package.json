@@ -2,8 +2,8 @@
   "name": "shitty-chat",
   "private": true,
   "workspaces": [
-    "server",
-    "web",
+    "app/server",
+    "app/web",
     "mcp"
   ],
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "pi": {
     "extensions": [
-      "./extension/index.ts"
+      "./pi/index.ts"
     ]
   },
   "dependencies": {

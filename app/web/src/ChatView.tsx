@@ -216,7 +216,7 @@ import {
   openBlob,
   seal,
   type DerivedKeys,
-} from "../../shared/crypto";
+} from "../../../shared/crypto";
 import {
   AAD,
   type AskPayload,
@@ -228,7 +228,7 @@ import {
   type TurnPayload,
   type TurnResponsePayload,
   type WelcomePayload,
-} from "../../shared/protocol";
+} from "../../../shared/protocol";
 
 // relayUrl is imported from ./api to keep dashboard / relay URL config in
 // one place (supports single-container deploy or split Vercel + backend).
