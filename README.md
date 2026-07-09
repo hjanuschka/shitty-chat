@@ -85,11 +85,14 @@ Don't want to run anything server-side? Use the public relay at
 
 1. Open https://shitty.chat, sign in with Google, click **create room**
 2. Copy the shown key
-3. Install the extension by adding it to `~/.pi/agent/settings.json`:
-   ```json
-   { "extensions": ["https://github.com/hjanuschka/shitty-chat/raw/main/extension/index.ts"] }
+3. Install the extension in one command:
+   ```bash
+   pi install git:github.com/hjanuschka/shitty-chat
    ```
-   (or clone locally and point at `extension/index.ts`)
+   Or add it manually to `~/.pi/agent/settings.json`:
+   ```json
+   { "packages": ["git:github.com/hjanuschka/shitty-chat"] }
+   ```
 4. From every pi you want in the room:
    ```
    /chat_join sc_XXXX

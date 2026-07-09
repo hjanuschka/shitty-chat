@@ -3,6 +3,7 @@ import { api, wsUrl } from "./api";
 import { deriveKeys, generateRoomKey, sha256Hex } from "../../shared/crypto";
 import { ChatView } from "./ChatView";
 import { Landing } from "./Landing";
+import { Onboarding } from "./Onboarding";
 
 interface Config {
   googleClientId: string | null;
@@ -279,6 +280,14 @@ function Rooms({ me, onLogout }: { me: Me; onLogout: () => void }) {
   const [chatOpen, setChatOpen] = useState<string | null>(null); // holds prefilled key when set
   const [newKey, setNewKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const dismissedKey = `sc-onboarding-dismissed-${me.email}`;
+  const [helpVisible, setHelpVisible] = useState<boolean>(
+    () => !localStorage.getItem(dismissedKey),
+  );
+  // Force help open whenever there are zero rooms (fresh state).
+  useEffect(() => {
+    if (rooms.length === 0) setHelpVisible(true);
+  }, [rooms.length]);
 
   const refresh = useCallback(async () => {
     try {
@@ -344,7 +353,19 @@ function Rooms({ me, onLogout }: { me: Me; onLogout: () => void }) {
       <div className="row">
         <button onClick={create}>+ create room</button>
         <button onClick={() => setChatOpen("")}>chat: join with key</button>
+        {!helpVisible && (
+          <button onClick={() => setHelpVisible(true)}>show help</button>
+        )}
       </div>
+      {helpVisible && (
+        <Onboarding
+          hasRooms={rooms.length > 0}
+          onDismiss={() => {
+            localStorage.setItem(dismissedKey, "1");
+            setHelpVisible(false);
+          }}
+        />
+      )}
       <table>
         <thead>
           <tr>

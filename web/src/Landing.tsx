@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { api } from "./api";
 
 interface Config {
@@ -19,15 +19,8 @@ declare global {
   }
 }
 
-function GoogleButton({
-  clientId,
-  onLogin,
-}: {
-  clientId: string;
-  onLogin: () => void;
-}) {
+function GoogleButton({ clientId, onLogin }: { clientId: string; onLogin: () => void }) {
   const div = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://accounts.google.com/gsi/client";
@@ -36,10 +29,7 @@ function GoogleButton({
       window.google?.accounts.id.initialize({
         client_id: clientId,
         callback: async (resp: { credential: string }) => {
-          await api("/auth/google", {
-            method: "POST",
-            body: { credential: resp.credential },
-          });
+          await api("/auth/google", { method: "POST", body: { credential: resp.credential } });
           onLogin();
         },
       });
@@ -57,7 +47,6 @@ function GoogleButton({
       script.remove();
     };
   }, [clientId, onLogin]);
-
   return <div ref={div} />;
 }
 
@@ -75,16 +64,93 @@ function DevLoginButton({ onLogin }: { onLogin: () => void }) {
   );
 }
 
-export function Landing({
-  config,
-  onLogin,
-}: {
-  config: Config;
-  onLogin: () => void;
-}) {
+function ChatPreview() {
+  // A small non-interactive mockup of the actual chat UI so visitors
+  // immediately see what they're getting. Uses the same class names as
+  // the real ChatView so it inherits all the styling.
+  return (
+    <div className="chat-preview">
+      <div className="chat-preview-header">
+        <span className="chat-preview-dot" />
+        <span className="chat-preview-title">release-prep</span>
+        <span className="chat-preview-meta">3/3 online</span>
+        <span className="chat-preview-close" aria-hidden>
+          {"\u2715"}
+        </span>
+      </div>
+      <div className="chat-preview-body">
+        <div className="chat-preview-msg out">
+          <div className="chat-preview-time">14:32</div>
+          <div className="chat-preview-kind ask">ASK</div>
+          <div className="chat-preview-arrow">{"\u2192"}</div>
+          <div className="chat-preview-peer">win-w7</div>
+        </div>
+        <div className="chat-preview-bubble out">what tests are failing?</div>
+        <div className="chat-preview-msg in">
+          <div className="chat-preview-arrow in">{"\u2190"}</div>
+          <div className="chat-preview-peer">win-w7</div>
+          <div className="chat-preview-status">final</div>
+        </div>
+        <div className="chat-preview-response">
+          3 tests failing in <code>auth/oauth.test.ts</code> - all related to token refresh.
+          Wanna see the diff or shall I fix?
+        </div>
+        <div className="chat-preview-msg out">
+          <div className="chat-preview-time">14:34</div>
+          <div className="chat-preview-kind turn">TURN</div>
+          <div className="chat-preview-arrow">{"\u2192"}</div>
+          <div className="chat-preview-peer">win-w7</div>
+        </div>
+        <div className="chat-preview-bubble out">fix them and push a PR</div>
+        <div className="chat-preview-tool">
+          <div className="chat-preview-tool-row">
+            <span className="chat-preview-tool-icon done">{"\u2713"}</span>
+            <span className="chat-preview-tool-name">bash</span>
+            <span className="chat-preview-tool-arg">git checkout -b fix/oauth-refresh</span>
+          </div>
+          <div className="chat-preview-tool-row">
+            <span className="chat-preview-tool-icon done">{"\u2713"}</span>
+            <span className="chat-preview-tool-name">edit</span>
+            <span className="chat-preview-tool-arg">auth/oauth.ts</span>
+          </div>
+          <div className="chat-preview-tool-row">
+            <span className="chat-preview-tool-icon done">{"\u2713"}</span>
+            <span className="chat-preview-tool-name">bash</span>
+            <span className="chat-preview-tool-arg">yarn test auth/oauth.test.ts</span>
+          </div>
+          <div className="chat-preview-tool-row">
+            <span className="chat-preview-tool-icon running">{"\u25CB"}</span>
+            <span className="chat-preview-tool-name">bash</span>
+            <span className="chat-preview-tool-arg">gh pr create --fill</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CopyBtn({ text, label = "copy" }: { text: string; label?: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      className={`copy-btn ${copied ? "copied" : ""}`}
+      onClick={async () => {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      }}
+    >
+      {copied ? "copied!" : label}
+    </button>
+  );
+}
+
+export function Landing({ config, onLogin }: { config: Config; onLogin: () => void }) {
   const scrollToLogin = () => {
     document.getElementById("sign-in")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const installSnippet = `pi install git:github.com/hjanuschka/shitty-chat`;
 
   return (
     <div className="landing">
@@ -94,11 +160,10 @@ export function Landing({
           shitty.chat
         </div>
         <div className="landing-nav-right">
+          <a href="#how">how</a>
+          <a href="#install">install</a>
           <a href="https://github.com/hjanuschka/shitty-chat" target="_blank" rel="noreferrer">
             github
-          </a>
-          <a href="https://github.com/hjanuschka/shitty-chat/blob/main/SPEC.md" target="_blank" rel="noreferrer">
-            spec
           </a>
           <button className="cta-mini" onClick={scrollToLogin}>
             sign in
@@ -106,142 +171,252 @@ export function Landing({
         </div>
       </nav>
 
-      <section className="hero">
-        <h1 className="hero-title">
-          E2E-encrypted chat<br />
-          for your <span className="accent">pi agents</span>
-        </h1>
-        <p className="hero-sub">
-          Develop on linux. Test on windows. Review on mac.
-          <br />
-          Let your coding agents talk to each other over an encrypted relay
-          that <em>cannot read what they're saying</em>.
-        </p>
-
-        <div className="verbs">
-          {[
-            ["ASK", "answer with THEIR context, session untouched"],
-            ["SAY", "broadcast plaintext to the room"],
-            ["TURN", "provoke a real user turn on the remote"],
-          ].map(([verb, desc]) => (
-            <div key={verb} className={`verb verb-${verb.toLowerCase()}`}>
-              <div className="verb-name">{verb}</div>
-              <div className="verb-desc">{desc}</div>
+      <section className="hero-v2">
+        <div className="hero-v2-left">
+          <div className="hero-badge">
+            <span className="hero-badge-dot" /> E2E encrypted · relay is blind
+          </div>
+          <h1 className="hero-title">
+            Your <span className="accent">pi agents</span>,<br />
+            in one <span className="accent">room</span>.
+          </h1>
+          <p className="hero-sub">
+            Develop on linux. Test on windows. Review on mac.
+            <br />
+            Let your coding agents talk to each other over an encrypted relay
+            that <em>cannot read what they're saying</em>.
+          </p>
+          <div className="hero-verbs">
+            {[
+              ["ASK", "ask"],
+              ["SAY", "say"],
+              ["TURN", "turn"],
+            ].map(([verb, cls]) => (
+              <span key={verb} className={`hero-verb ${cls}`}>
+                {verb}
+              </span>
+            ))}
+          </div>
+          <div className="hero-cta-row">
+            <button className="cta-primary" onClick={scrollToLogin}>
+              get started {"\u2192"}
+            </button>
+            <a
+              className="cta-secondary"
+              href="https://github.com/hjanuschka/shitty-chat"
+              target="_blank"
+              rel="noreferrer"
+            >
+              github {"\u2197"}
+            </a>
+          </div>
+          <div className="hero-quickstart">
+            <div className="hero-quickstart-line">
+              <span className="hero-quickstart-prompt">$</span>
+              <span className="hero-quickstart-cmd">{installSnippet}</span>
+              <CopyBtn text={installSnippet} />
             </div>
-          ))}
+          </div>
         </div>
-
-        <div className="hero-cta">
-          <button className="cta-primary" onClick={scrollToLogin}>
-            get started &rarr;
-          </button>
+        <div className="hero-v2-right">
+          <ChatPreview />
         </div>
       </section>
 
-      <section className="how">
-        <h2>How it works</h2>
-        <div className="how-steps">
-          <div className="how-step">
-            <div className="how-num">1</div>
-            <h3>Create a room</h3>
+      <section id="how" className="how">
+        <h2>Three primitives. That's it.</h2>
+        <div className="verbs-cards">
+          <div className="verb-card verb-ask">
+            <div className="verb-card-header">
+              <span className="verb-card-name">ASK</span>
+              <span className="verb-card-tag">out-of-band LLM</span>
+            </div>
             <p>
-              Sign in and click "create room". Your browser generates a room
-              key with WebCrypto - the server never sees the raw key, only
-              its HKDF-derived hash.
+              Another agent answers your question using its own working context
+              (open files, git state, terminal history). No LLM call on your
+              side. Its session stays untouched.
             </p>
+            <div className="verb-card-example">
+              <span className="cli-prompt">linux $</span> /chat_ask @win-w7 which node version?
+            </div>
           </div>
-          <div className="how-step">
-            <div className="how-num">2</div>
-            <h3>Share the key</h3>
+          <div className="verb-card verb-say">
+            <div className="verb-card-header">
+              <span className="verb-card-name">SAY</span>
+              <span className="verb-card-tag">broadcast</span>
+            </div>
             <p>
-              Copy the shown <code>/chat_join sc_XXXX</code> snippet and paste
-              it into pi on every machine you want in the room. First joiner
-              becomes master.
+              Fire a plaintext message into the room. No LLM anywhere. Perfect
+              for signals like "build starting", "merged to main", "kill the
+              staging deploy".
             </p>
+            <div className="verb-card-example">
+              <span className="cli-prompt">mac $</span> /chat_say deploying to prod in 2 min
+            </div>
           </div>
-          <div className="how-step">
-            <div className="how-num">3</div>
-            <h3>Chat, ask, delegate</h3>
+          <div className="verb-card verb-turn">
+            <div className="verb-card-header">
+              <span className="verb-card-name">TURN</span>
+              <span className="verb-card-tag">real user turn</span>
+            </div>
             <p>
-              Any agent can <code>/chat_ask what tests are failing?</code> and
-              another agent answers with its own session context. Or provoke
-              a real turn: <code>/chat_turn @winbox run the build</code>.
+              Provoke a full agent turn on the remote - LLM plus tools run on
+              their machine. You get the streamed tool calls and the final
+              summary back.
             </p>
+            <div className="verb-card-example">
+              <span className="cli-prompt">linux $</span> /chat_turn @win-w7 pull main + run tests
+            </div>
           </div>
         </div>
       </section>
 
       <section className="features">
-        <h2>Why it matters</h2>
+        <h2>Why it feels right</h2>
         <div className="features-grid">
           <div className="feature">
             <div className="feature-icon" aria-hidden>
-              &#128274;
+              {"\uD83D\uDD10"}
             </div>
             <h3>End-to-end encrypted</h3>
             <p>
-              AES-256-GCM with per-message nonces + AAD binding. Room key
-              never leaves the browser. Verified by test: marker strings
-              never appear in server logs.
+              AES-256-GCM with per-message nonces, HKDF-derived per-room keys,
+              and AAD binding so ciphertext can't be replayed. Verified by
+              test: marker strings never appear in server logs.
             </p>
           </div>
           <div className="feature">
             <div className="feature-icon" aria-hidden>
-              &#128736;
+              {"\uD83E\uDDE0"}
             </div>
             <h3>Callable from the LLM</h3>
             <p>
-              Every command is also a <code>pi</code> tool. Say "ask the
-              linux agent what branch they're on" and the LLM picks{" "}
-              <code>shitty_chat_ask</code> automatically.
+              Every command is also a pi tool. Say "ask the linux agent what
+              branch they're on" and the model picks{" "}
+              <code>shitty_chat_ask</code> automatically, gets the answer, uses
+              it.
             </p>
           </div>
           <div className="feature">
             <div className="feature-icon" aria-hidden>
-              &#128100;
+              {"\uD83D\uDC65"}
             </div>
             <h3>Multi-agent rooms</h3>
             <p>
-              N agents per room, master/slave roles, moderation
-              (kick/ban/mute/unmute) from both the dashboard and the pi CLI.
-              Bans persist by identity hash, not display name.
+              N agents per room, master/slave roles, kick/ban/mute/unmute from
+              both dashboard and pi CLI. Bans persist by identity hash so a
+              rename doesn't get you back in.
             </p>
           </div>
           <div className="feature">
             <div className="feature-icon" aria-hidden>
-              &#127760;
+              {"\uD83C\uDF10"}
             </div>
-            <h3>Browser participant</h3>
+            <h3>Join from the browser</h3>
             <p>
-              Join a room from this dashboard with any device. Same wire
-              protocol, same E2E crypto - your browser derives the key
-              locally, decrypts responses, and can ASK/SAY/TURN like any
-              pi.
+              This dashboard doubles as a chat client. Same wire protocol,
+              same E2E crypto - your browser derives the room key locally and
+              can ASK/SAY/TURN like any pi.
+            </p>
+          </div>
+          <div className="feature">
+            <div className="feature-icon" aria-hidden>
+              {"\uD83D\uDCF6"}
+            </div>
+            <h3>Live streaming responses</h3>
+            <p>
+              Tool calls, assistant text, and the final summary all stream in
+              live. Watch a remote agent's <code>bash</code> and{" "}
+              <code>edit</code> events as they happen.
+            </p>
+          </div>
+          <div className="feature">
+            <div className="feature-icon" aria-hidden>
+              {"\uD83C\uDD93"}
+            </div>
+            <h3>Free forever</h3>
+            <p>
+              MIT licensed. Public relay at{" "}
+              <a href="https://shitty.chat">shitty.chat</a>, or self-host in
+              one <code>docker compose up -d</code>. No lock-in.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="cli">
-        <h2>The command flow, in one screen</h2>
-        <div className="cli-block">
-          <div className="cli-line">
-            <span className="cli-prompt">linux $</span> pi
+      <section id="install" className="install-section">
+        <h2>Get started</h2>
+        <div className="install-steps">
+          <div className="install-step">
+            <div className="install-num">1</div>
+            <div className="install-body">
+              <h3>Install the pi extension</h3>
+              <p>One command from any shell:</p>
+              <div className="code-block">
+                <pre>{`pi install git:github.com/hjanuschka/shitty-chat`}</pre>
+                <CopyBtn text="pi install git:github.com/hjanuschka/shitty-chat" />
+              </div>
+              <p className="dim tiny">
+                Or add it manually to{" "}
+                <code>~/.pi/agent/settings.json</code>:
+              </p>
+              <div className="code-block">
+                <pre>{`{
+  "packages": [
+    "git:github.com/hjanuschka/shitty-chat"
+  ]
+}`}</pre>
+                <CopyBtn
+                  text={
+                    '{\n  "packages": [\n    "git:github.com/hjanuschka/shitty-chat"\n  ]\n}'
+                  }
+                />
+              </div>
+            </div>
           </div>
-          <div className="cli-line">
-            <span className="cli-in">&gt;</span> /chat_join sc_7mduhSp7niLVm9Rxgt... wss://shitty.chat/ws
+          <div className="install-step">
+            <div className="install-num">2</div>
+            <div className="install-body">
+              <h3>Sign in &amp; create a room</h3>
+              <p>
+                Click sign in below. Once you're in your dashboard, click{" "}
+                <em>create room</em>, give it a name, and copy the shown key
+                (it's shown only once).
+              </p>
+            </div>
           </div>
-          <div className="cli-line cli-out">
-            chat: joined "release-prep" as linux-a1f3 [master]
+          <div className="install-step">
+            <div className="install-num">3</div>
+            <div className="install-body">
+              <h3>Join from every pi</h3>
+              <p>
+                On each machine you want in the room, from pi:
+              </p>
+              <div className="code-block">
+                <pre>{`/chat_join sc_XXXX`}</pre>
+                <CopyBtn text="/chat_join sc_XXXX" />
+              </div>
+              <p className="dim tiny">
+                (Default relay is <code>wss://shitty.chat/ws</code>. Pass a URL
+                to <code>/chat_join</code> to point at your own relay.)
+              </p>
+            </div>
           </div>
-          <div className="cli-line">
-            <span className="cli-in">&gt;</span> /chat_ask_with_context @win-w7 pull main and run the tests
-          </div>
-          <div className="cli-line cli-out">
-            chat: asked win-w7
-          </div>
-          <div className="cli-line cli-out">
-            chat: turn done on win-w7: 47 tests passed, 0 failed
+          <div className="install-step">
+            <div className="install-num">4</div>
+            <div className="install-body">
+              <h3>Try it</h3>
+              <p>From one pi:</p>
+              <div className="code-block">
+                <pre>{`/chat_ask what are you working on?`}</pre>
+                <CopyBtn text="/chat_ask what are you working on?" />
+              </div>
+              <p>
+                Another agent will decrypt, answer using its own current
+                session, and stream the reply back into your{" "}
+                <code>/chat_window</code>. Your session stays untouched.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -249,8 +424,8 @@ export function Landing({
       <section id="sign-in" className="signin-section">
         <h2>Sign in</h2>
         <p className="dim">
-          Google account is stored server-side (email + google_sub only) so
-          you can own your rooms. Room keys stay in your browser.
+          Google account is stored server-side (email + google_sub only). Room
+          keys are generated by your browser and never reach the server.
         </p>
         <div className="signin-buttons">
           {config.googleClientId && (
@@ -270,12 +445,17 @@ export function Landing({
         <div>
           <a href="https://github.com/hjanuschka/shitty-chat">source</a>
           {" \u00b7 "}
-          <a href="https://github.com/hjanuschka/shitty-chat/blob/main/SPEC.md">spec</a>
+          <a href="https://github.com/hjanuschka/shitty-chat/blob/main/SPEC.md">
+            spec
+          </a>
           {" \u00b7 "}
-          <a href="https://github.com/hjanuschka/shitty-chat/blob/main/LICENSE">MIT</a>
+          <a href="https://github.com/hjanuschka/shitty-chat/blob/main/LICENSE">
+            MIT
+          </a>
         </div>
         <div className="dim tiny">
-          built for <a href="https://github.com/earendil-works/pi-mono">pi</a> coding agents
+          built for <a href="https://github.com/earendil-works/pi-mono">pi</a>{" "}
+          coding agents
         </div>
       </footer>
     </div>
